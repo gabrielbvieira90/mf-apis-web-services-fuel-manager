@@ -7,11 +7,11 @@ namespace mf_apis_web_services_fuel_manager.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class VeiculosController : ControllerBase
+    public class ConsumosController : ControllerBase
     {
-        private readonly AppDbContext _context; //configuração do banco de dados, variével _context
+        private readonly AppDbContext _context; //configuração do banco de dados, variével _context,
 
-        public VeiculosController(AppDbContext context)
+        public ConsumosController(AppDbContext context)
         {
             _context = context;
         }
@@ -19,29 +19,24 @@ namespace mf_apis_web_services_fuel_manager.Controllers
         [HttpGet]
         public async Task<ActionResult> GetAll() //tarefa assincrona
         {
-            var model = await _context.Veiculos.ToListAsync();
+            var model = await _context.Consumos.ToListAsync();
             return Ok(model);
         }
 
         [HttpPost]
-        public async Task<ActionResult> Create(Veiculo model)
+        public async Task<ActionResult> Create(Consumo model)
         {
 
-            if (model.AnoFrabricacao <=0 || model.AnoModelo <=0)
-            {
-                return BadRequest(new { message = "Ano de Fabricação e Ano de Modelo são obrigatórios!" }); //mensagem caso não retorne a condição
-            }
-            _context.Veiculos.Add(model);
+            _context.Consumos.Add(model);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetById", new {id = model.Id}, model); //retorno da criação mostrando o que criado
+            return CreatedAtAction("GetById", new { id = model.Id }, model); //retorno da criação mostrando o que criado
         }
 
         [HttpGet("{id}")]
         public async Task<ActionResult> GetById(int id)
         {
-            var model = await _context.Veiculos
-                .Include(t => t.Consumos) // para puxar os dados do consumo associados ao veiculo
+            var model = await _context.Consumos
                 .FirstOrDefaultAsync(c => c.Id == id);
 
             if (model == null) return NotFound();
@@ -51,16 +46,16 @@ namespace mf_apis_web_services_fuel_manager.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult> Update(int id, Veiculo model) //recebe o id mais o modelo pra atualizar todos os dados
+        public async Task<ActionResult> Update(int id, Consumo model) //recebe o id mais o modelo pra atualizar todos os dados
         {
             if (id != model.Id) return BadRequest(); //validação para ver se o ID que estou modificando na rota é igual ao ID que está no modelo
 
-            var modeloDb = await _context.Veiculos.AsNoTracking() //para nao rastrear e deixar os dados presos
+            var modeloDb = await _context.Consumos.AsNoTracking() //para nao rastrear e deixar os dados presos
                 .FirstOrDefaultAsync(c => c.Id == id);
 
             if (modeloDb == null) return NotFound();
 
-            _context.Veiculos.Update(model);
+            _context.Consumos.Update(model);
             await _context.SaveChangesAsync();
 
             return NoContent();
@@ -71,23 +66,25 @@ namespace mf_apis_web_services_fuel_manager.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult> Delete(int id)
         {
-           
-            var model = await _context.Veiculos.FindAsync(id);
+
+            var model = await _context.Consumos.FindAsync(id);
 
             if (model == null) return NotFound();
 
-             _context.Veiculos.Remove(model);
-             await _context.SaveChangesAsync();
+            _context.Consumos.Remove(model);
+            await _context.SaveChangesAsync();
 
-             return NoContent();
+            return NoContent();
         }
 
-        private void GerarLinks(Veiculo model)
+        private void GerarLinks(Consumo model)
         {
             model.Links.Add(new LinkDto(model.Id, Url.ActionLink(), rel: "self", metodo: "GET"));
             model.Links.Add(new LinkDto(model.Id, Url.ActionLink(), rel: "update", metodo: "PUT"));
             model.Links.Add(new LinkDto(model.Id, Url.ActionLink(), rel: "delete", metodo: "Delete"));
         }
 
-        }
+
     }
+}
+

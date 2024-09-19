@@ -1,11 +1,14 @@
 using mf_apis_web_services_fuel_manager.Models;
 using Microsoft.EntityFrameworkCore;
+using System.Text; //bibliotecas para evitar os ciclos infinitos
+using System.Text.Json.Serialization; //bibliotecas para evitar os ciclos infinitos
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddJsonOptions(x => x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles); //ignorando os ciclos
 
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")) //configuração da string de conexão
