@@ -30,14 +30,14 @@ namespace mf_apis_web_services_fuel_manager.Controllers
             Usuario novo = new Usuario() //recebendo os dados do model
             {
                 Nome = model.Nome,
-                Password =BCrypt.Net.Bcrypt.HashPassword(model.Password),
+                Password = BCrypt.Net.Bcrypt.HashPassword(model.Password),
                 Perfil = model.Perfil
             };
 
             _context.Usuarios.Add(novo); //passando os dados do model novo
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetById", new { id = model.Id }, model); //retorno da criação mostrando o que criado
+            return CreatedAtAction("GetById", new { id = novo.Id }, novo); //retorno da criação mostrando o que criado
         }
 
         [HttpGet("{id}")]
