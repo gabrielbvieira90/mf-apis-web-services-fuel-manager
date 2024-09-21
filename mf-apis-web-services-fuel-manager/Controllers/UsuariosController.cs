@@ -30,7 +30,7 @@ namespace mf_apis_web_services_fuel_manager.Controllers
             Usuario novo = new Usuario() //recebendo os dados do model
             {
                 Nome = model.Nome,
-                Password = BCrypt.Net.Bcrypt.HashPassword(model.Password),
+                Password = BCrypt.Net.BCrypt.HashPassword(model.Password),
                 Perfil = model.Perfil
             };
 
@@ -62,7 +62,7 @@ namespace mf_apis_web_services_fuel_manager.Controllers
             if (modeloDb == null) return NotFound();
 
             modeloDb.Nome = model.Nome;
-            modeloDb.Password = BCrypt.Net.Bcrypt.HashPassword(model.Password);
+            modeloDb.Password = BCrypt.Net.BCrypt.HashPassword(model.Password);
             modeloDb.Perfil = model.Perfil;
 
             _context.Usuarios.Update(modeloDb);
